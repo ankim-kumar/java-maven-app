@@ -61,7 +61,7 @@ pipeline {
                     <p>Started by: ${buildUser}</p>
                     <p>Build URL: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
                 """,
-                to: 'ankim9522@gmail.com,
+                to: 'ankim9522@gmail.com',
                 from: 'ankim9522@gmail.com',
                 replyTo: 'ankim9522@gmail.com',
                 mimeType: 'text/html',
