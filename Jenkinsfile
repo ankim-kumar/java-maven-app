@@ -40,7 +40,7 @@ pipeline {
         }
         stage('Docker container of web app ') {
             steps {
-                sh 'docker run -d -p 9002:8080 --name javaBpro_container_qa -t ankim628/javabpro-qa:1'
+                sh 'docker run -d -p 9003:8080 --name javaBpro_container_qa -t ankim628/javabpro-qa:1'
             }
         }
     }    
