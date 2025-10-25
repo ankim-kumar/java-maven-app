@@ -32,8 +32,7 @@ pipeline {
             steps {
                 script{
                     withDockerRegistry(credentialsId: 'docker-id', toolname: 'docker'){
-                        sh '''docker build -t javabproj-main .
-                              docker tag javabproj-main    ankim628/javabpro-main:1
+                        sh '''docker build -t ankim628/javabpro-main:1 .
                               docker push ankim628/javabpro-main:1'''
                     }
                 }    
@@ -61,7 +60,7 @@ pipeline {
                     <p>Started by: ${buildUser}</p>
                     <p>Build URL: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
                 """,
-                to: 'ankim9522@gmail.com',
+                to: 'ankim9522@gmail.com, ankimthakur@gmail.com',
                 from: 'ankim9522@gmail.com',
                 replyTo: 'ankim9522@gmail.com',
                 mimeType: 'text/html',
