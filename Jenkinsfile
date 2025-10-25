@@ -32,8 +32,8 @@ pipeline {
             steps {
                 script{
                     withDockerRegistry(credentialsId: 'docker-id', toolname: 'docker'){
-                        sh '''docker build -t javabproj .
-                              docker tag javabproj    ankim628/javabpro-main:1
+                        sh '''docker build -t javabproj-main .
+                              docker tag javabproj-main    ankim628/javabpro-main:1
                               docker push ankim628/javabpro-main:1'''
                     }
                 }    
