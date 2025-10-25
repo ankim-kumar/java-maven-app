@@ -1,77 +1,73 @@
 pipeline {
     agent any
-    
     tools {
         maven "Maven3"
     }
+
     stages {
-        stage('Clean workspace') {
+        stage('clean installation') {
             steps {
                 cleanWs()
             }
         }
-        stage('Git clone') {
+        stage('Clone the git repo') {
             steps {
-                git branch: 'main', url: 'https://github.com/Aseemakram19/java-maven-app.git'
+                git branch: 'main', url: 'https://github.com/ankim-kumar/java-maven-app.git'
             }
         }
-        stage('maven war file build') {
+        stage('Maven war file build ') {
             steps {
-               sh 'mvn clean package'
+                sh 'mvn clean package'
             }
         }
-        stage('Docker images/conatiner remove') {
+        stage('Docker images/container remove') {
             steps {
-                script{
-                        sh '''docker stop javamavenapp_container
-                        docker rm javamavenapp_container
-                        docker rmi javamavenapp aseemakram19/javamavenapp:latest'''
-                }  
-            }
-        }
-        stage('Docker images - Push to dockerhub') {
-            steps {
-                script{
-                    withDockerRegistry(credentialsId: 'docker', toolname: 'docker'){
+                sh ''' docker stop javaBpro_container_main || true
+                       docker rm javaBpro_container_main || true
+                       docker rmi ankim628/javabpro-main:1  || true '''
                 
-                        sh '''docker build -t javamavenapp .
-                        docker tag javamavenapp aseemakram19/javamavenapp:latest
-                        docker push  aseemakram19/javamavenapp:latest'''
-                      } 
-                }
             }
         }
-        stage('docker container of app') {
+        stage('create and push the docker images docker repository ') {
             steps {
-               sh 'docker run -d -p 9000:8080 --name javamavenapp_container -t aseemakram19/javamavenapp:latest'
+                script{
+                    withDockerRegistry(credentialsId: 'docker-id', toolname: 'docker'){
+                        sh '''docker build -t javabproj .
+                              docker tag javabproj    ankim628/javabpro-main:1
+                              docker push ankim628/javabpro-main:1'''
+                    }
+                }    
             }
         }
-        
-    }
-    post {
-    always {
-        script {
-            def buildStatus = currentBuild.currentResult
-            def buildUser = currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')[0]?.userId ?: 'Github User'
+        stage('Docker container of web app ') {
+            steps {
+                sh 'docker run -d -p 9001:8080 --name javaBpro_container_main -t ankim628/javabpro-main:1'
+            }
+        }
+    }    
+        post {
+          always {
+            script {
+               def buildStatus = currentBuild.currentResult
+               def buildUser = currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')[0]?.userId ?: 'Github User'
             
             emailext (
                 subject: "Pipeline ${buildStatus}: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                 body: """
-                    <p>This is a Jenkins maven CICD pipeline status.</p>
+                    <p>This is a Jenkins amazon-prime-video CICD pipeline status.</p>
                     <p>Project: ${env.JOB_NAME}</p>
                     <p>Build Number: ${env.BUILD_NUMBER}</p>
                     <p>Build Status: ${buildStatus}</p>
                     <p>Started by: ${buildUser}</p>
                     <p>Build URL: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
                 """,
-                to: 'mohdaseemakram19@gmail.com',
-                from: 'mohdaseemakram19@gmail.com',
-                replyTo: 'mohdaseemakram19@gmail.com',
+                to: 'ankim9522@gmail.com,
+                from: 'ankim9522@gmail.com',
+                replyTo: 'ankim9522@gmail.com',
                 mimeType: 'text/html',
                 attachmentsPattern: 'trivyfs.txt,trivyimage.txt'
             )
            }
+         }
        }
-
-    }
-}
+     }
